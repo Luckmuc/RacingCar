@@ -1,0 +1,101 @@
+.maps-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.maps-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.maps-controls {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.maps-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  color: rgba(240, 240, 240, 0.7);
+  padding: 1rem 2rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.map-card {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(255, 0, 110, 0.05));
+  border: 2px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.map-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+.map-difficulty {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent);
+  color: var(--darker);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.map-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+}
+
+.map-card p {
+  color: rgba(240, 240, 240, 0.7);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
+}
+
+.map-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.map-buttons button {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .maps-container h1 {
+    font-size: 2rem;
+  }
+
+  .maps-controls {
+    flex-direction: column;
+  }
+
+  .maps-controls button {
+    width: 100%;
+  }
+}

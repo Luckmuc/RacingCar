@@ -1,0 +1,27 @@
+[Unit]
+Description=Racing Game Web Application
+Documentation=https://github.com/yourusername/RacingCar
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=racing-game
+WorkingDirectory=/opt/racing-game
+
+# Start service
+ExecStartPre=-/usr/bin/docker compose down
+ExecStart=/usr/bin/docker compose up
+
+# Restart policy
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits
+MemoryLimit=2G
+CPUQuota=80%
+
+[Install]
+WantedBy=multi-user.target

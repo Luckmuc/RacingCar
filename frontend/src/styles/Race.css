@@ -1,0 +1,206 @@
+.race-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.race-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.race-hud {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hud-top,
+.hud-bottom {
+  pointer-events: auto;
+  padding: 1.5rem;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: center;
+}
+
+.info-panel {
+  background: rgba(10, 14, 39, 0.8);
+  border: 2px solid var(--primary);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+  backdrop-filter: blur(10px);
+  min-width: 300px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.hud-bottom {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 3rem;
+  align-items: center;
+}
+
+.speedometer {
+  background: rgba(10, 14, 39, 0.8);
+  border: 2px solid var(--secondary);
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.speed-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.speed-label {
+  font-size: 0.75rem;
+  color: rgba(240, 240, 240, 0.6);
+}
+
+.controls-hint {
+  background: rgba(10, 14, 39, 0.8);
+  border: 2px solid var(--accent);
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.controls-hint p {
+  margin: 0;
+}
+
+.car-status {
+  background: rgba(10, 14, 39, 0.8);
+  border: 2px solid var(--primary);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  backdrop-filter: blur(10px);
+  color: var(--primary);
+  font-weight: 600;
+  text-align: center;
+}
+
+.hud-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-overlay {
+  background: rgba(10, 14, 39, 0.95);
+  border: 3px solid var(--success);
+  border-radius: 1rem;
+  padding: 2rem 4rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--success);
+  animation: fadeInOut 0.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.race-finish-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(5, 8, 18, 0.95);
+  border: 3px solid var(--primary);
+  border-radius: 2rem;
+  padding: 3rem;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+  pointer-events: auto;
+  min-width: 400px;
+  z-index: 100;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.race-finish-dialog h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--success);
+}
+
+.race-finish-dialog p {
+  font-size: 1.25rem;
+  color: rgba(240, 240, 240, 0.8);
+  margin-bottom: 2rem;
+}
+
+.finish-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.finish-buttons button {
+  flex: 1;
+  max-width: 150px;
+}
+
+.condition {
+  font-size: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+  .hud-bottom {
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+  }
+
+  .controls-hint {
+    grid-column: 1 / -1;
+  }
+
+  .race-finish-dialog {
+    min-width: 90%;
+    max-width: 500px;
+  }
+
+  .info-panel {
+    min-width: auto;
+    width: 100%;
+  }
+}
