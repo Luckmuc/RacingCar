@@ -9,6 +9,20 @@ export const Home: React.FC = () => {
   const { state } = useGame();
   const navigate = useNavigate();
 
+  const startRace = (mode: string) => {
+    // If no car selected, go to garage first
+    if (!state.selectedCar) {
+      navigate('garage');
+      return;
+    }
+    // If no map selected, go to maps to pick one
+    if (!state.selectedMap) {
+      navigate('maps');
+      return;
+    }
+    navigate('race', { mode });
+  };
+
   return (
     <div className="home-container">
       <div className="hero-section">
@@ -17,28 +31,34 @@ export const Home: React.FC = () => {
         <p className="welcome">
           {state.user && `${t('messages.welcomeBack')}, ${state.user.username}!`}
         </p>
+        {state.selectedCar && (
+          <p className="selected-info">Car: {state.selectedCar.name}</p>
+        )}
+        {state.selectedMap && (
+          <p className="selected-info">Map: {state.selectedMap.name}</p>
+        )}
       </div>
 
       <div className="race-modes">
         <h2>{t('home.raceModes')}</h2>
         <div className="modes-grid">
-          <div className="mode-card" onClick={() => navigate('race', { mode: 'normal' })}>
-            <h3>🤖 {t('home.normalRace')}</h3>
+          <div className="mode-card" onClick={() => startRace('normal')}>
+            <h3>{t('home.normalRace')}</h3>
             <p>Race against 3 AI opponents</p>
           </div>
 
-          <div className="mode-card" onClick={() => navigate('race', { mode: 'training' })}>
-            <h3>👻 {t('home.trainingRace')}</h3>
+          <div className="mode-card" onClick={() => startRace('training')}>
+            <h3>{t('home.trainingRace')}</h3>
             <p>Race against your best lap</p>
           </div>
 
-          <div className="mode-card" onClick={() => navigate('race', { mode: 'multiplayer' })}>
-            <h3>🏁 {t('home.multiplayerRace')}</h3>
+          <div className="mode-card" onClick={() => startRace('multiplayer')}>
+            <h3>{t('home.multiplayerRace')}</h3>
             <p>Race online with others</p>
           </div>
 
-          <div className="mode-card" onClick={() => navigate('race', { mode: 'party' })}>
-            <h3>🎉 {t('home.partyRace')}</h3>
+          <div className="mode-card" onClick={() => startRace('party')}>
+            <h3>{t('home.partyRace')}</h3>
             <p>Race with friends in a party</p>
           </div>
         </div>
@@ -46,16 +66,16 @@ export const Home: React.FC = () => {
 
       <div className="quick-links">
         <button onClick={() => navigate('garage')} className="btn-primary">
-          🚗 Garage
+          Garage
         </button>
         <button onClick={() => navigate('maps')} className="btn-primary">
-          🗺️ Maps
+          Maps
         </button>
         <button onClick={() => navigate('leaderboard')} className="btn-primary">
-          📊 Leaderboard
+          Leaderboard
         </button>
         <button onClick={() => navigate('profile')} className="btn-primary">
-          👤 Profile
+          Profile
         </button>
       </div>
     </div>

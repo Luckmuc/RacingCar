@@ -16,7 +16,7 @@ export const Profile: React.FC = () => {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <div className="profile-avatar">👤</div>
+        <div className="profile-avatar">U</div>
         <div className="profile-info">
           <h1>{state.user.username}</h1>
           <div className="stats-grid">
@@ -26,15 +26,15 @@ export const Profile: React.FC = () => {
             </div>
             <div className="stat">
               <div className="stat-label">Gems</div>
-              <div className="stat-value">💎 {state.user.gems}</div>
+              <div className="stat-value">{state.user.gems}</div>
             </div>
             <div className="stat">
               <div className="stat-label">Wins</div>
-              <div className="stat-value">🏆 {state.user.totalWins}</div>
+              <div className="stat-value">{state.user.totalWins}</div>
             </div>
             <div className="stat">
               <div className="stat-label">Races</div>
-              <div className="stat-value">🏁 {state.user.totalRaces}</div>
+              <div className="stat-value">{state.user.totalRaces}</div>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@ export const Profile: React.FC = () => {
                   <h4>{car.name}</h4>
                   <div className="car-quick-stats">
                     {car.condition && (
-                      <span>💪 {car.condition}%</span>
+                      <span>{car.condition}%</span>
                     )}
                   </div>
                 </div>

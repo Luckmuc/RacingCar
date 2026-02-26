@@ -26,7 +26,7 @@ export const Party: React.FC = () => {
 
   return (
     <div className="party-container">
-      <h1>🎉 {t('party.title')}</h1>
+      <h1>{t('party.title')}</h1>
 
       <div className="party-card">
         <h2>{t('party.invitePlayer')}</h2>

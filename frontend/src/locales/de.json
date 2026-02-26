@@ -40,12 +40,13 @@
     "usernameTaken": "Benutzername bereits vergeben",
     "loginFailed": "Anmeldung fehlgeschlagen",
     "registerFailed": "Registrierung fehlgeschlagen",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
     "noAccount": "Haben Sie noch kein Konto?",
     "haveAccount": "Haben Sie bereits ein Konto?"
   },
   "garage": {
     "title": "Garage",
-    "myCards": "Meine Autos",
+    "myCars": "Meine Autos",
     "allCars": "Verfügbare Autos",
     "selectCar": "Auto auswählen",
     "buyCar": "Auto kaufen",

@@ -36,7 +36,7 @@ export const leaderboardService = {
     api.get('/leaderboard/global/top', { params: { limit } }),
   
   saveRace: (data: any) =>
-    api.post('/race/save', data),
+    api.post('/leaderboard/race/save', data),
 };
 
 export const carsService = {

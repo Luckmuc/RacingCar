@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { User, Car, Map, GameState } from '../types';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { Car, Map, GameState } from '../types';
 import { authService, carsService, mapsService } from '../services/api';
 import { initializeSocket, closeSocket } from '../services/socket';
 
@@ -31,58 +31,6 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     selectedMap: null,
   });
 
-  const login = useCallback(async (username: string, password: string) => {
-    const response = await authService.login(username, password);
-    const { token, user } = response.data;
-    
-    localStorage.setItem('token', token);
-    setState(prev => ({
-      ...prev,
-      user,
-      isAuthenticated: true,
-    }));
-
-    // Initialize WebSocket
-    initializeSocket(token);
-
-    // Load user data
-    await loadProfile();
-    await loadCars();
-    await loadMaps();
-  }, []);
-
-  const register = useCallback(async (username: string, password: string) => {
-    const response = await authService.register(username, password);
-    const { token, user } = response.data;
-    
-    localStorage.setItem('token', token);
-    setState(prev => ({
-      ...prev,
-      user,
-      isAuthenticated: true,
-    }));
-
-    initializeSocket(token);
-    await loadProfile();
-    await loadCars();
-    await loadMaps();
-  }, []);
-
-  const logout = useCallback(() => {
-    localStorage.removeItem('token');
-    closeSocket();
-    setState({
-      user: null,
-      isAuthenticated: false,
-      cars: [],
-      ownedCars: [],
-      selectedCar: null,
-      maps: [],
-      userMaps: [],
-      selectedMap: null,
-    });
-  }, []);
-
   const loadProfile = useCallback(async () => {
     try {
       const response = await authService.getProfile();
@@ -100,10 +48,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const allCarsResponse = await carsService.getAllCars();
       const ownedCarsResponse = await carsService.getOwnedCars();
       
+      const ownedCars = ownedCarsResponse.data;
       setState(prev => ({
         ...prev,
         cars: allCarsResponse.data,
-        ownedCars: ownedCarsResponse.data,
+        ownedCars,
+        // Auto-select first owned car if none selected
+        selectedCar: prev.selectedCar || (ownedCars.length > 0 ? ownedCars[0] : null),
       }));
     } catch (error) {
       console.error('Failed to load cars:', error);
@@ -113,17 +64,89 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loadMaps = useCallback(async () => {
     try {
       const publicMapsResponse = await mapsService.getPublicMaps();
-      const userMapsResponse = await mapsService.getUserMaps();
+      let userMaps: any[] = [];
+      try {
+        const userMapsResponse = await mapsService.getUserMaps();
+        userMaps = userMapsResponse.data;
+      } catch {
+        // User may not have maps yet
+      }
       
       setState(prev => ({
         ...prev,
         maps: publicMapsResponse.data,
-        userMaps: userMapsResponse.data,
+        userMaps,
+        selectedMap: prev.selectedMap || (publicMapsResponse.data.length > 0 ? publicMapsResponse.data[0] : null),
       }));
     } catch (error) {
       console.error('Failed to load maps:', error);
     }
   }, []);
+
+  const loadAllData = useCallback(async () => {
+    await Promise.all([loadProfile(), loadCars(), loadMaps()]);
+  }, [loadProfile, loadCars, loadMaps]);
+
+  const login = useCallback(async (username: string, password: string) => {
+    const response = await authService.login(username, password);
+    const { token, user } = response.data;
+    
+    localStorage.setItem('token', token);
+    setState(prev => ({
+      ...prev,
+      user,
+      isAuthenticated: true,
+    }));
+
+    try { initializeSocket(token); } catch (e) { console.error('Socket init failed:', e); }
+
+    // Load data after token is stored
+    await loadAllData();
+  }, [loadAllData]);
+
+  const register = useCallback(async (username: string, password: string) => {
+    const response = await authService.register(username, password);
+    const { token, user } = response.data;
+    
+    localStorage.setItem('token', token);
+    setState(prev => ({
+      ...prev,
+      user,
+      isAuthenticated: true,
+    }));
+
+    try { initializeSocket(token); } catch (e) { console.error('Socket init failed:', e); }
+    await loadAllData();
+  }, [loadAllData]);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    try { closeSocket(); } catch (e) { /* ignore */ }
+    setState({
+      user: null,
+      isAuthenticated: false,
+      cars: [],
+      ownedCars: [],
+      selectedCar: null,
+      maps: [],
+      userMaps: [],
+      selectedMap: null,
+    });
+  }, []);
+
+  // Auto-login on mount if token exists
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setState(prev => ({ ...prev, isAuthenticated: true }));
+      try { initializeSocket(token); } catch (e) { console.error('Socket init failed:', e); }
+      loadAllData().catch(() => {
+        // Token expired or invalid
+        localStorage.removeItem('token');
+        setState(prev => ({ ...prev, isAuthenticated: false }));
+      });
+    }
+  }, [loadAllData]);
 
   const selectCar = useCallback((car: Car) => {
     setState(prev => ({

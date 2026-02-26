@@ -31,7 +31,7 @@ export const Leaderboard: React.FC = () => {
 
   return (
     <div className="leaderboard-container">
-      <h1>📊 {t('leaderboard.title')}</h1>
+      <h1>{t('leaderboard.title')}</h1>
 
       <div className="leaderboard-tabs">
         <button
@@ -70,7 +70,7 @@ export const Leaderboard: React.FC = () => {
               globalLeaderboard.map((entry, index) => (
                 <div key={entry.id} className="table-row">
                   <div className="col-position">
-                    {index < 3 ? ['🥇', '🥈', '🥉'][index] : index + 1}
+                    {index < 3 ? ['#1', '#2', '#3'][index] : index + 1}
                   </div>
                   <div className="col-player">{entry.username}</div>
                   <div className="col-wins">{entry.totalWins || 0}</div>

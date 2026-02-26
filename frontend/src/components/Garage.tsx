@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGame } from '../contexts/GameContext';
 import { useNavigate } from './Router';
@@ -34,7 +34,7 @@ export const Garage: React.FC = () => {
   return (
     <div className="garage-container">
       <div className="garage-header">
-        <h1>🚗 {t('garage.title')}</h1>
+        <h1>{t('garage.title')}</h1>
         <p>Gems: <span className="gem-count">{state.user?.gems || 0}</span></p>
       </div>
 
@@ -69,10 +69,10 @@ export const Garage: React.FC = () => {
                 <p>{car.description}</p>
                 
                 <div className="car-stats">
-                  <div>⚡ {car.acceleration}</div>
-                  <div>🏎️ {car.maxSpeed}</div>
-                  <div>🎯 {car.handling}</div>
-                  <div>🛡️ {car.durability}</div>
+                  <div>ACC {car.acceleration}</div>
+                  <div>SPD {car.maxSpeed}</div>
+                  <div>HND {car.handling}</div>
+                  <div>DUR {car.durability}</div>
                 </div>
 
                 <div className="condition-bar">
@@ -113,13 +113,13 @@ export const Garage: React.FC = () => {
                 <p>{car.description}</p>
 
                 <div className="car-stats">
-                  <div>⚡ {car.acceleration}</div>
-                  <div>🏎️ {car.maxSpeed}</div>
-                  <div>🎯 {car.handling}</div>
-                  <div>🛡️ {car.durability}</div>
+                  <div>ACC {car.acceleration}</div>
+                  <div>SPD {car.maxSpeed}</div>
+                  <div>HND {car.handling}</div>
+                  <div>DUR {car.durability}</div>
                 </div>
 
-                <div className="price">💎 {car.price}</div>
+                <div className="price">{car.price} gems</div>
 
                 {owned ? (
                   <div className="badge accent">{t('garage.alreadyOwned')}</div>
@@ -127,7 +127,7 @@ export const Garage: React.FC = () => {
                   <button
                     className="btn-primary"
                     onClick={() => handleBuyCar(car.id)}
-                    disabled={state.user?.gems! < car.price}
+                    disabled={(state.user?.gems ?? 0) < car.price}
                   >
                     {t('garage.buyCar')}
                   </button>

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { User } from './User';
 import { Car } from './Car';
 
@@ -7,10 +7,18 @@ export class CarOwnership {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column()
+  userId!: string;
+
   @ManyToOne(() => User, (user) => user.cars)
+  @JoinColumn({ name: 'userId' })
   user!: User;
 
+  @Column()
+  carId!: number;
+
   @ManyToOne(() => Car)
+  @JoinColumn({ name: 'carId' })
   car!: Car;
 
   @Column({ default: 100 })

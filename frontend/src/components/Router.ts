@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 type PageType = 'login' | 'register' | 'home' | 'garage' | 'maps' | 'leaderboard' | 'profile' | 'race' | 'editor' | 'party';
 

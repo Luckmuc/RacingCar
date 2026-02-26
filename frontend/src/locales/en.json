@@ -40,6 +40,7 @@
     "usernameTaken": "Username already taken",
     "loginFailed": "Login failed",
     "registerFailed": "Registration failed",
+    "passwordMismatch": "Passwords do not match",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?"
   },

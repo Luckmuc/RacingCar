@@ -9,42 +9,51 @@ export class CarPhysics {
   speed: number = 0;
   
   maxSpeed: number = 200;
-  acceleration_power: number = 0.1;
-  friction: number = 0.98;
-  handling: number = 0.05;
+  accelerationPower: number = 300;
+  brakePower: number = 400;
+  friction: number = 0.97;
+  handling: number = 2.5;
+  
+  private turnInput: number = 0;
   
   // Damage system
   condition: number = 100;
   damageThreshold: number = 5;
 
   update(deltaTime: number) {
-    // Apply friction
-    this.velocity.multiplyScalar(this.friction);
+    // Apply turning (speed-dependent so car doesn't spin in place)
+    const speedFactor = Math.min(this.speed / 50, 1) * 0.8 + 0.2;
+    this.rotation += this.turnInput * this.handling * deltaTime * speedFactor;
+    
+    // Apply friction (frame-rate independent)
+    const frictionFactor = Math.pow(this.friction, deltaTime * 60);
+    this.velocity.multiplyScalar(frictionFactor);
     
     // Apply acceleration
     this.velocity.addScaledVector(this.acceleration, deltaTime);
     
     // Limit speed
-    const speed = this.velocity.length();
-    if (speed > this.maxSpeed) {
+    this.speed = this.velocity.length();
+    if (this.speed > this.maxSpeed) {
       this.velocity.normalize().multiplyScalar(this.maxSpeed);
+      this.speed = this.maxSpeed;
     }
     
     // Update position
     this.position.addScaledVector(this.velocity, deltaTime);
     
-    // Update speed for display
-    this.speed = this.velocity.length();
+    // Keep car on ground
+    this.position.y = 0;
   }
 
   setInput(forward: number, turn: number) {
+    const power = forward > 0 ? this.accelerationPower : this.brakePower;
     this.acceleration = new THREE.Vector3(
-      Math.sin(this.rotation) * forward,
+      Math.sin(this.rotation) * forward * power,
       0,
-      Math.cos(this.rotation) * forward
+      Math.cos(this.rotation) * forward * power
     );
-    
-    this.rotation += turn * this.handling;
+    this.turnInput = turn;
   }
 
   takeDamage(amount: number = this.damageThreshold) {
@@ -57,6 +66,7 @@ export class CarPhysics {
     this.acceleration = new THREE.Vector3(0, 0, 0);
     this.rotation = 0;
     this.speed = 0;
+    this.turnInput = 0;
   }
 }
 
@@ -193,7 +203,7 @@ export class RaceScene {
     }
     
     // Ground
-    const groundGeometry = new THREE.PlaneGeometry(1000, 1000);
+    const groundGeometry = new THREE.PlaneGeometry(3000, 3000);
     const groundMaterial = new THREE.MeshStandardMaterial({
       color: 0x1a2f4a,
       roughness: 0.8,
@@ -262,7 +272,7 @@ export class RaceScene {
     return carGroup;
   }
 
-  addCar(physics: CarPhysics, color: number, isPlayer: boolean = false) {
+  addCar(physics: CarPhysics, color: number) {
     const carMesh = this.createCarMesh(color);
     physics.position.copy(this.checkpoints[0]);
     carMesh.position.copy(physics.position);
@@ -277,13 +287,12 @@ export class RaceScene {
       this.raceTime += deltaTime;
     }
     
-    // Update player car
+    // Update player car physics
     this.playerCar.setInput(playerInput.forward, playerInput.turn);
     this.playerCar.update(deltaTime);
     
     // Update opponents (simple AI)
     this.opponents.forEach(opponent => {
-      // Simple AI: move towards next checkpoint
       const direction = new THREE.Vector3().subVectors(
         this.checkpoints[this.currentCheckpoint],
         opponent.position
@@ -292,20 +301,31 @@ export class RaceScene {
       opponent.update(deltaTime);
     });
     
+    // Sync all car meshes with their physics
+    this.scene.traverse((obj) => {
+      if (obj.userData.physics instanceof CarPhysics) {
+        const physics = obj.userData.physics as CarPhysics;
+        obj.position.copy(physics.position);
+        obj.rotation.y = physics.rotation;
+      }
+    });
+    
     // Check checkpoint collision
-    const checkpointDistance = this.playerCar.position.distanceTo(
-      this.checkpoints[this.currentCheckpoint]
-    );
-    if (checkpointDistance < 40) {
-      this.currentCheckpoint++;
-      if (this.currentCheckpoint >= this.checkpoints.length) {
-        this.raceFinished = true;
+    if (this.currentCheckpoint < this.checkpoints.length) {
+      const checkpointDistance = this.playerCar.position.distanceTo(
+        this.checkpoints[this.currentCheckpoint]
+      );
+      if (checkpointDistance < 40) {
+        this.currentCheckpoint++;
+        if (this.currentCheckpoint >= this.checkpoints.length) {
+          this.raceFinished = true;
+        }
       }
     }
     
     // Update camera (follow player)
-    const cameraDistance = 60;
-    const cameraHeight = 40;
+    const cameraDistance = 80;
+    const cameraHeight = 50;
     this.camera.position.x = this.playerCar.position.x - Math.sin(this.playerCar.rotation) * cameraDistance;
     this.camera.position.y = this.playerCar.position.y + cameraHeight;
     this.camera.position.z = this.playerCar.position.z - Math.cos(this.playerCar.rotation) * cameraDistance;

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { User } from './User';
 import { Map } from './Map';
 
@@ -7,10 +7,18 @@ export class Race {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column()
+  userId!: string;
+
   @ManyToOne(() => User, (user) => user.races)
+  @JoinColumn({ name: 'userId' })
   user!: User;
 
+  @Column()
+  mapId!: string;
+
   @ManyToOne(() => Map)
+  @JoinColumn({ name: 'mapId' })
   map!: Map;
 
   @Column()

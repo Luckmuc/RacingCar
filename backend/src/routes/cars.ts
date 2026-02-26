@@ -31,10 +31,8 @@ router.get('/owned', authMiddleware, async (req: AuthRequest, res: Response) => 
     });
 
     res.json(ownedCars.map(ownership => ({
-      id: ownership.car.id,
-      name: ownership.car.name,
-      condition: ownership.condition,
       ...ownership.car,
+      condition: ownership.condition,
     })));
   } catch (error) {
     console.error(error);

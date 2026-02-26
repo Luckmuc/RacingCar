@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGame } from './contexts/GameContext';
 import { usePage, useNavigate } from './components/Router';
@@ -20,12 +20,7 @@ const App: React.FC = () => {
   const page = usePage();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token && !state.isAuthenticated) {
-      // Auto-login logic would be here
-    }
-  }, []);
+  // Auto-login is handled by GameContext
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -64,7 +59,7 @@ const App: React.FC = () => {
       {state.isAuthenticated && (
         <header className="header">
           <h1 onClick={() => navigate('home')} style={{ cursor: 'pointer', margin: 0 }}>
-            🏁 Racing Game
+            Racing Game
           </h1>
           <div className="header-controls">
             <select
@@ -76,7 +71,7 @@ const App: React.FC = () => {
               <option value="de">Deutsch</option>
             </select>
             <button onClick={() => navigate('profile')} className="btn-secondary">
-              👤 {state.user?.username}
+              {state.user?.username}
             </button>
             <button
               onClick={() => {

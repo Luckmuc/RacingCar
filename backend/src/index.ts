@@ -124,6 +124,106 @@ const startServer = async () => {
         }
         console.log('✓ Default cars seeded');
       }
+
+      // Seed default maps if not exist
+      const mapRepo = AppDataSource.getRepository('Map');
+      const mapCount = await mapRepo.count();
+      if (mapCount === 0) {
+        const defaultMaps = [
+          {
+            name: 'Starter Circuit',
+            description: 'A simple oval track for beginners',
+            checkpoints: [
+              { x: 0, y: 0, z: 0 },
+              { x: 200, y: 0, z: 0 },
+              { x: 300, y: 0, z: 200 },
+              { x: 200, y: 0, z: 400 },
+              { x: 0, y: 0, z: 400 },
+              { x: -100, y: 0, z: 200 },
+            ],
+            trackPath: [
+              { x: 0, y: 0, z: 0 },
+              { x: 100, y: 0, z: -50 },
+              { x: 200, y: 0, z: 0 },
+              { x: 300, y: 0, z: 100 },
+              { x: 300, y: 0, z: 200 },
+              { x: 250, y: 0, z: 350 },
+              { x: 200, y: 0, z: 400 },
+              { x: 100, y: 0, z: 450 },
+              { x: 0, y: 0, z: 400 },
+              { x: -100, y: 0, z: 300 },
+              { x: -100, y: 0, z: 200 },
+              { x: -50, y: 0, z: 50 },
+            ],
+            obstacles: [],
+            difficulty: 1,
+            isPublic: true,
+            creatorId: 'system',
+          },
+          {
+            name: 'Desert Sprint',
+            description: 'A fast straight track through the desert',
+            checkpoints: [
+              { x: 0, y: 0, z: 0 },
+              { x: 0, y: 0, z: 200 },
+              { x: 100, y: 0, z: 400 },
+              { x: 0, y: 0, z: 600 },
+            ],
+            trackPath: [
+              { x: 0, y: 0, z: 0 },
+              { x: 0, y: 0, z: 100 },
+              { x: 0, y: 0, z: 200 },
+              { x: 50, y: 0, z: 300 },
+              { x: 100, y: 0, z: 400 },
+              { x: 50, y: 0, z: 500 },
+              { x: 0, y: 0, z: 600 },
+            ],
+            obstacles: [
+              { x: 30, y: 0, z: 150 },
+              { x: -30, y: 0, z: 350 },
+            ],
+            difficulty: 2,
+            isPublic: true,
+            creatorId: 'system',
+          },
+          {
+            name: 'Mountain Pass',
+            description: 'Winding roads with sharp turns and obstacles',
+            checkpoints: [
+              { x: 0, y: 0, z: 0 },
+              { x: 150, y: 0, z: 150 },
+              { x: -100, y: 0, z: 300 },
+              { x: 200, y: 0, z: 450 },
+              { x: 0, y: 0, z: 600 },
+            ],
+            trackPath: [
+              { x: 0, y: 0, z: 0 },
+              { x: 80, y: 0, z: 80 },
+              { x: 150, y: 0, z: 150 },
+              { x: 50, y: 0, z: 220 },
+              { x: -100, y: 0, z: 300 },
+              { x: 50, y: 0, z: 380 },
+              { x: 200, y: 0, z: 450 },
+              { x: 100, y: 0, z: 530 },
+              { x: 0, y: 0, z: 600 },
+            ],
+            obstacles: [
+              { x: 100, y: 0, z: 100 },
+              { x: -50, y: 0, z: 250 },
+              { x: 150, y: 0, z: 400 },
+              { x: 50, y: 0, z: 550 },
+            ],
+            difficulty: 4,
+            isPublic: true,
+            creatorId: 'system',
+          },
+        ];
+
+        for (const map of defaultMaps) {
+          await mapRepo.insert(map);
+        }
+        console.log('✓ Default maps seeded');
+      }
     }
 
     // Start listening

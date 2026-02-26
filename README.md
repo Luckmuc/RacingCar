@@ -143,7 +143,7 @@ cd frontend && npm run dev
 ### Leaderboard
 - `GET /api/leaderboard/:mapId` - Get map leaderboard
 - `GET /api/leaderboard/global/top` - Get global leaderboard
-- `POST /api/race/save` - Save race result
+- `POST /api/leaderboard/race/save` - Save race result
 
 ## Deployment
 

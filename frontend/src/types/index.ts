@@ -65,7 +65,7 @@ export interface RaceSession {
   id: string;
   mapId: string;
   mode: 'normal' | 'training' | 'multiplayer' | 'party';
-  players: Map<string, PlayerState>;
+  players: globalThis.Map<string, PlayerState>;
   startTime: number;
 }
 

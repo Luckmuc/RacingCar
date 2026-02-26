@@ -2,7 +2,7 @@ export const GAME_CONFIG = {
   PORT: parseInt(process.env.PORT || '3001'),
   HOST: process.env.HOST || '0.0.0.0',
   JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
-  JWT_EXPIRE: '7d',
+  JWT_EXPIRE_SECONDS: 7 * 24 * 60 * 60, // 7 days in seconds
   
   // Gems earning
   GEM_BASE_REWARD: 10,

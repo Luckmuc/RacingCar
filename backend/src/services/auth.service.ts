@@ -11,7 +11,7 @@ export class AuthService {
     return jwt.sign(
       { userId, username } as JWTPayload,
       GAME_CONFIG.JWT_SECRET,
-      { expiresIn: GAME_CONFIG.JWT_EXPIRE }
+      { expiresIn: GAME_CONFIG.JWT_EXPIRE_SECONDS }
     );
   }
 

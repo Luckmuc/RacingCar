@@ -7,7 +7,7 @@ const router = Router();
 const raceRepository = AppDataSource.getRepository(Race);
 
 // Get leaderboard for a map
-router.get('/leaderboard/:mapId', async (req, res: Response) => {
+router.get('/:mapId', async (req, res: Response) => {
   try {
     const { mapId } = req.params;
     const { limit = 10 } = req.query;
@@ -37,7 +37,7 @@ router.get('/leaderboard/:mapId', async (req, res: Response) => {
 });
 
 // Get user position on a specific map
-router.get('/leaderboard/:mapId/user/:userId', async (req, res: Response) => {
+router.get('/:mapId/user/:userId', async (req, res: Response) => {
   try {
     const { mapId, userId } = req.params;
 
@@ -65,7 +65,7 @@ router.get('/leaderboard/:mapId/user/:userId', async (req, res: Response) => {
 });
 
 // Get global leaderboard (best racers)
-router.get('/leaderboard/global/top', async (req, res: Response) => {
+router.get('/global/top', async (req, res: Response) => {
   try {
     const { limit = 20 } = req.query;
 

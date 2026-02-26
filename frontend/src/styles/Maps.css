@@ -1,80 +1,60 @@
 .maps-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
 .maps-container h1 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .maps-controls {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .maps-tabs {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid var(--border);
-}
-
-.tab {
-  background: transparent;
-  border: none;
-  color: rgba(240, 240, 240, 0.7);
-  padding: 1rem 2rem;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  border-bottom: 3px solid transparent;
-  transition: all 0.3s ease;
-}
-
-.tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .map-card {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(255, 0, 110, 0.05));
-  border: 2px solid var(--border);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.25rem;
   position: relative;
 }
 
 .map-card:hover {
-  border-color: var(--primary);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-3px);
+  border-color: #555;
 }
 
 .map-difficulty {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0.75rem;
+  right: 0.75rem;
   background: var(--accent);
-  color: var(--darker);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  color: #000;
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .map-card h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.25rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
 }
 
 .map-card p {
-  color: rgba(240, 240, 240, 0.7);
-  margin: 0 0 1.5rem 0;
-  line-height: 1.5;
+  color: #888;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
 }
 
 .map-buttons {
@@ -88,7 +68,7 @@
 
 @media (max-width: 768px) {
   .maps-container h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   .maps-controls {

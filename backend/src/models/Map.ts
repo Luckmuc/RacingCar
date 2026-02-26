@@ -8,19 +8,19 @@ export class Map {
   @Column()
   name!: string;
 
-  @Column()
+  @Column({ default: '' })
   description!: string;
 
-  @Column({ type: 'simple-array' })
-  checkpoints!: string[]; // JSON array of checkpoint coordinates
+  @Column({ type: 'jsonb', default: [] })
+  checkpoints!: any[];
 
-  @Column({ type: 'simple-array' })
-  trackPath!: string[]; // JSON array of track points
+  @Column({ type: 'jsonb', default: [] })
+  trackPath!: any[];
 
-  @Column({ type: 'simple-array' })
-  obstacles!: string[]; // JSON array of obstacle data
+  @Column({ type: 'jsonb', default: [] })
+  obstacles!: any[];
 
-  @Column()
+  @Column({ default: 3 })
   difficulty!: number; // 1-5
 
   @Column({ default: false })
