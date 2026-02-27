@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🏁 Racing Game - Setup Script"
+echo "Racing Game - Setup Script"
 echo "==============================="
 
 # Variables
@@ -15,33 +15,33 @@ SERVICE_USER="racing-game"
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ This script must be run as root"
+  echo "[ERROR] This script must be run as root"
   exit 1
 fi
 
-echo "📦 Installing Docker dependencies..."
+echo "Installing Docker dependencies..."
 apt-get update
 apt-get install -y docker.io docker-compose git curl
 
 # Create user
-echo "👤 Creating service user..."
+echo "Creating service user..."
 if ! id -u "$SERVICE_USER" > /dev/null 2>&1; then
   useradd -r -s /bin/bash -d "$INSTALL_DIR" "$SERVICE_USER"
-  echo "✓ Created user $SERVICE_USER"
+  echo "[OK] Created user $SERVICE_USER"
 else
-  echo "✓ User $SERVICE_USER already exists"
+  echo "[OK] User $SERVICE_USER already exists"
 fi
 
 # Create installation directory
-echo "📁 Setting up installation directory..."
+echo "Setting up installation directory..."
 mkdir -p "$INSTALL_DIR"
 
 # Clone or copy repository
 if [ -d ".git" ]; then
-  echo "📂 Copying repository to $INSTALL_DIR..."
+  echo "Copying repository to $INSTALL_DIR..."
   cp -r . "$INSTALL_DIR"
 else
-  echo "❌ Not in a git repository. Please run this script from the project root."
+  echo "[ERROR] Not in a git repository. Please run this script from the project root."
   exit 1
 fi
 
@@ -50,7 +50,7 @@ chown -R "$SERVICE_USER:$SERVICE_USER" "$INSTALL_DIR"
 chmod 755 "$INSTALL_DIR"
 
 # Create environment file
-echo "⚙️  Creating environment file..."
+echo "Creating environment file..."
 if [ ! -f "$INSTALL_DIR/.env" ]; then
   cat > "$INSTALL_DIR/.env" << 'EOF'
 # Database
@@ -78,26 +78,26 @@ CORS_ORIGIN=*
 # API URL for frontend
 API_URL=http://localhost:3001/api
 EOF
-  echo "✓ Created .env file - PLEASE EDIT WITH YOUR SETTINGS!"
+  echo "[OK] Created .env file - PLEASE EDIT WITH YOUR SETTINGS!"
 else
-  echo "✓ .env file already exists"
+  echo "[OK] .env file already exists"
 fi
 
 # Install systemd service
-echo "🔧 Installing systemd service..."
+echo "Installing systemd service..."
 cp "$INSTALL_DIR/racing-game.service" "/etc/systemd/system/$SERVICE_NAME"
 chmod 644 "/etc/systemd/system/$SERVICE_NAME"
 systemctl daemon-reload
-echo "✓ Service installed"
+echo "[OK] Service installed"
 
 # Enable and start service
-echo "🚀 Starting service..."
+echo "Starting service..."
 systemctl enable "$SERVICE_NAME"
 systemctl start "$SERVICE_NAME"
 
 # Show status
 echo ""
-echo "✅ Installation complete!"
+echo "[OK] Installation complete!"
 echo ""
 echo "Service Status:"
 systemctl status "$SERVICE_NAME" --no-pager —lines=3
@@ -116,10 +116,10 @@ echo "  Backend API: http://localhost:3001/api"
 docker-compose up -d
 
 # Wait for PostgreSQL to be ready
-echo "⏳ Waiting for PostgreSQL..."
+echo "Waiting for PostgreSQL..."
 sleep 5
 
 # Create database and run migrations
 PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE racing_game;" 2>/dev/null || true
 
-echo "✅ Database setup complete"
+echo "[OK] Database setup complete"

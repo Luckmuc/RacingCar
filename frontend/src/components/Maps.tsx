@@ -2,13 +2,24 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGame } from '../contexts/GameContext';
 import { useNavigate } from './Router';
+import { mapsService } from '../services/api';
 import '../styles/Maps.css';
 
 export const Maps: React.FC = () => {
   const { t } = useTranslation();
-  const { state, selectMap } = useGame();
+  const { state, selectMap, loadMaps } = useGame();
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'public' | 'user'>('public');
+
+  const handleDeleteMap = async (mapId: string) => {
+    if (!window.confirm('Are you sure you want to delete this map?')) return;
+    try {
+      await mapsService.deleteMap(mapId);
+      await loadMaps();
+    } catch (error) {
+      console.error('Failed to delete map:', error);
+    }
+  };
 
   return (
     <div className="maps-container">
@@ -64,10 +75,25 @@ export const Maps: React.FC = () => {
                 <p>{map.description}</p>
                 <div className="map-buttons">
                   <button
+                    onClick={() => {
+                      selectMap(map);
+                      navigate('race', { mode: 'normal' });
+                    }}
+                    className="btn-primary"
+                  >
+                    {t('maps.playMap')}
+                  </button>
+                  <button
                     onClick={() => navigate('editor', { mapId: map.id })}
                     className="btn-secondary"
                   >
                     {t('maps.editMap')}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteMap(map.id)}
+                    className="btn-danger"
+                  >
+                    {t('maps.deleteMap')}
                   </button>
                 </div>
               </div>

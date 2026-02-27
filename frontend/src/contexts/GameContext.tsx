@@ -48,10 +48,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const allCarsResponse = await carsService.getAllCars();
       const ownedCarsResponse = await carsService.getOwnedCars();
       
-      const ownedCars = ownedCarsResponse.data;
+      const allCars = Array.isArray(allCarsResponse.data) ? allCarsResponse.data : [];
+      const ownedCars = Array.isArray(ownedCarsResponse.data) ? ownedCarsResponse.data : [];
       setState(prev => ({
         ...prev,
-        cars: allCarsResponse.data,
+        cars: allCars,
         ownedCars,
         // Auto-select first owned car if none selected
         selectedCar: prev.selectedCar || (ownedCars.length > 0 ? ownedCars[0] : null),
@@ -64,19 +65,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loadMaps = useCallback(async () => {
     try {
       const publicMapsResponse = await mapsService.getPublicMaps();
+      const publicMaps = Array.isArray(publicMapsResponse.data) ? publicMapsResponse.data : [];
       let userMaps: any[] = [];
       try {
         const userMapsResponse = await mapsService.getUserMaps();
-        userMaps = userMapsResponse.data;
+        userMaps = Array.isArray(userMapsResponse.data) ? userMapsResponse.data : [];
       } catch {
         // User may not have maps yet
       }
       
       setState(prev => ({
         ...prev,
-        maps: publicMapsResponse.data,
+        maps: publicMaps,
         userMaps,
-        selectedMap: prev.selectedMap || (publicMapsResponse.data.length > 0 ? publicMapsResponse.data[0] : null),
+        selectedMap: prev.selectedMap || (publicMaps.length > 0 ? publicMaps[0] : null),
       }));
     } catch (error) {
       console.error('Failed to load maps:', error);

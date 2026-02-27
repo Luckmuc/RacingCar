@@ -3,25 +3,33 @@ import { io, Socket } from 'socket.io-client';
 let socket: Socket | null = null;
 
 export const initializeSocket = (token: string) => {
-  if (!socket) {
-    socket = io({
-      auth: { token },
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5,
-    });
-
-    socket.on('authenticated', (data) => {
-      if (data.success) {
-        console.log('✓ WebSocket authenticated');
-      }
-    });
-
-    socket.on('connect_error', (error) => {
-      console.error('WebSocket error:', error);
-    });
+  if (socket) {
+    socket.disconnect();
+    socket = null;
   }
+
+  socket = io({
+    auth: { token },
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionDelay: 2000,
+    reconnectionDelayMax: 10000,
+    reconnectionAttempts: 3,
+  });
+
+  socket.on('connect', () => {
+    console.log('Socket connected');
+  });
+
+  socket.on('authenticated', (data) => {
+    if (data.success) {
+      console.log('Socket authenticated');
+    }
+  });
+
+  socket.on('connect_error', (error) => {
+    console.warn('Socket connection error (non-critical):', error.message);
+  });
 
   return socket;
 };

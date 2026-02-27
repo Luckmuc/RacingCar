@@ -23,15 +23,35 @@ interface RaceSession {
 }
 
 const raceSessions = new Map<string, RaceSession>();
-const partyRepository = AppDataSource.getRepository(Party);
 
 export const initializeMultiplayer = (io: Server) => {
+  const partyRepository = AppDataSource.getRepository(Party);
+
+  // Middleware: authenticate on handshake
+  io.use((socket, next) => {
+    const token = socket.handshake.auth?.token;
+    if (token) {
+      const payload = AuthService.verifyToken(token);
+      if (payload) {
+        (socket as any).userId = payload.userId;
+        (socket as any).username = payload.username;
+        return next();
+      }
+    }
+    // Allow connection but unauthenticated
+    next();
+  });
+
   io.on('connection', (socket: Socket) => {
-    let userId: string | null = null;
-    let username: string | null = null;
+    let userId: string | null = (socket as any).userId || null;
+    let username: string | null = (socket as any).username || null;
     let currentRace: string | null = null;
 
-    // Authenticate
+    if (userId) {
+      socket.emit('authenticated', { success: true });
+    }
+
+    // Also allow explicit authenticate event
     socket.on('authenticate', (token: string) => {
       const payload = AuthService.verifyToken(token);
       if (payload) {

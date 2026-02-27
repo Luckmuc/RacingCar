@@ -1,6 +1,6 @@
 # Racing Game - Complete Feature Implementation
 
-## ✅ Completed Features
+## Completed Features
 
 ### Backend (Node.js + Express + PostgreSQL)
 - [x] Express server setup with TypeScript

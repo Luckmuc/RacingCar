@@ -36,7 +36,7 @@ export const Party: React.FC = () => {
             value={inviteUsername}
             onChange={(e) => setInviteUsername(e.target.value)}
             placeholder={t('party.enterUsername')}
-            onKeyPress={(e) => e.key === 'Enter' && handleInvite()}
+            onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
           />
           <button onClick={handleInvite} className="btn-primary">
             {t('party.invitePlayer')}

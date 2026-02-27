@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from './Router';
+import { useNavigate, usePageParams } from './Router';
 import { mapsService } from '../services/api';
 import '../styles/Editor.css';
 
 export const MapEditor: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const params = usePageParams();
   const [mapName, setMapName] = useState('');
   const [mapDesc, setMapDesc] = useState('');
   const [difficulty, setDifficulty] = useState(3);
   const [isPublic, setIsPublic] = useState(true);
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (params.mapId) {
+      setIsEditing(true);
+      mapsService.getMap(params.mapId).then(response => {
+        const map = response.data;
+        setMapName(map.name || '');
+        setMapDesc(map.description || '');
+        setDifficulty(map.difficulty || 3);
+        setIsPublic(map.isPublic ?? true);
+      }).catch(error => {
+        console.error('Failed to load map:', error);
+        setMessage('Failed to load map data');
+      });
+    }
+  }, [params.mapId]);
 
   const handleSave = async () => {
     if (!mapName) {
@@ -22,35 +40,44 @@ export const MapEditor: React.FC = () => {
 
     setSaving(true);
     try {
-      // Generate a simple track with checkpoints
-      const checkpoints = [
-        { x: 0, y: 0, z: 0 },
-        { x: 150, y: 0, z: 100 },
-        { x: 300, y: 0, z: 0 },
-        { x: 150, y: 0, z: -100 },
-      ];
-      const trackPath = [
-        { x: 0, y: 0, z: 0 },
-        { x: 75, y: 0, z: 60 },
-        { x: 150, y: 0, z: 100 },
-        { x: 225, y: 0, z: 60 },
-        { x: 300, y: 0, z: 0 },
-        { x: 225, y: 0, z: -60 },
-        { x: 150, y: 0, z: -100 },
-        { x: 75, y: 0, z: -60 },
-      ];
+      if (isEditing && params.mapId) {
+        await mapsService.updateMap(params.mapId, {
+          name: mapName,
+          description: mapDesc || 'Custom map',
+          difficulty,
+          isPublic,
+        });
+        setMessage('Map updated successfully!');
+      } else {
+        // Generate a simple track with checkpoints
+        const checkpoints = [
+          { x: 0, y: 0, z: 0 },
+          { x: 150, y: 0, z: 100 },
+          { x: 300, y: 0, z: 0 },
+          { x: 150, y: 0, z: -100 },
+        ];
+        const trackPath = [
+          { x: 0, y: 0, z: 0 },
+          { x: 75, y: 0, z: 60 },
+          { x: 150, y: 0, z: 100 },
+          { x: 225, y: 0, z: 60 },
+          { x: 300, y: 0, z: 0 },
+          { x: 225, y: 0, z: -60 },
+          { x: 150, y: 0, z: -100 },
+          { x: 75, y: 0, z: -60 },
+        ];
 
-      await mapsService.createMap({
-        name: mapName,
-        description: mapDesc || 'Custom map',
-        checkpoints,
-        trackPath,
-        obstacles: [],
-        difficulty,
-        isPublic,
-      });
-
-      setMessage('Map saved successfully!');
+        await mapsService.createMap({
+          name: mapName,
+          description: mapDesc || 'Custom map',
+          checkpoints,
+          trackPath,
+          obstacles: [],
+          difficulty,
+          isPublic,
+        });
+        setMessage('Map saved successfully!');
+      }
       setTimeout(() => navigate('maps'), 1500);
     } catch (error: any) {
       setMessage(error.response?.data?.error || 'Failed to save map');
@@ -61,7 +88,7 @@ export const MapEditor: React.FC = () => {
 
   return (
     <div className="editor-container">
-      <h1>{t('editor.title')}</h1>
+      <h1>{isEditing ? t('common.edit') + ' ' + t('editor.title') : t('editor.title')}</h1>
 
       <div className="editor-canvas">
         <div className="canvas-placeholder">

@@ -10,6 +10,11 @@ export const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const startRace = (mode: string) => {
+    // Party mode goes to the party page
+    if (mode === 'party') {
+      navigate('party');
+      return;
+    }
     // If no car selected, go to garage first
     if (!state.selectedCar) {
       navigate('garage');

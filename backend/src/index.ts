@@ -55,7 +55,7 @@ const startServer = async () => {
     // Initialize database
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
-      console.log('✓ Database connected');
+      console.log('[OK] Database connected');
 
       // Seed default cars if not exist
       const carRepo = AppDataSource.getRepository('Car');
@@ -122,7 +122,7 @@ const startServer = async () => {
         for (const car of defaultCars) {
           await carRepo.insert(car);
         }
-        console.log('✓ Default cars seeded');
+        console.log('[OK] Default cars seeded');
       }
 
       // Seed default maps if not exist
@@ -222,17 +222,17 @@ const startServer = async () => {
         for (const map of defaultMaps) {
           await mapRepo.insert(map);
         }
-        console.log('✓ Default maps seeded');
+        console.log('[OK] Default maps seeded');
       }
     }
 
     // Start listening
     httpServer.listen(GAME_CONFIG.PORT, GAME_CONFIG.HOST, () => {
-      console.log(`✓ Server running at ${GAME_CONFIG.HOST}:${GAME_CONFIG.PORT}`);
-      console.log(`✓ WebSocket ready on ws://${GAME_CONFIG.HOST}:${GAME_CONFIG.PORT}`);
+      console.log(`[OK] Server running at ${GAME_CONFIG.HOST}:${GAME_CONFIG.PORT}`);
+      console.log(`[OK] WebSocket ready on ws://${GAME_CONFIG.HOST}:${GAME_CONFIG.PORT}`);
     });
   } catch (error) {
-    console.error('✗ Failed to start server:', error);
+    console.error('[ERROR] Failed to start server:', error);
     process.exit(1);
   }
 };

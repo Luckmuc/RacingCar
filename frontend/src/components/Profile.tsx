@@ -43,7 +43,7 @@ export const Profile: React.FC = () => {
       <div className="profile-section">
         <h2>Cars</h2>
         <div className="cars-list">
-          {state.ownedCars.length > 0 ? (
+          {Array.isArray(state.ownedCars) && state.ownedCars.length > 0 ? (
             state.ownedCars.map(car => (
               <div key={car.id} className="car-summary">
                 <div 

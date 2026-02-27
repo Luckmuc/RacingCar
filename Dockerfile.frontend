@@ -10,15 +10,10 @@ COPY frontend ./
 
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
+# Production stage - Caddy serves static files AND proxies API/socket to backend
+FROM caddy:2-alpine
 
-WORKDIR /app
-
-RUN npm install -g serve
-
-COPY --from=build /app/frontend/dist ./dist
+COPY --from=build /app/frontend/dist /srv
+COPY Caddyfile.docker /etc/caddy/Caddyfile
 
 EXPOSE 3000
-
-CMD ["serve", "-s", "dist", "-l", "3000"]
