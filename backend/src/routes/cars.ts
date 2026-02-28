@@ -52,7 +52,13 @@ router.post('/buy/:carId', authMiddleware, async (req: AuthRequest, res: Respons
     }
 
     const user = await userRepository.findOne({ where: { id: userId } });
-    if (!user || user.gems < car.price) {
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isLuckmuc = user.username === 'Luckmuc';
+
+    if (!isLuckmuc && user.gems < car.price) {
       return res.status(400).json({ error: 'Insufficient gems' });
     }
 
@@ -65,8 +71,10 @@ router.post('/buy/:carId', authMiddleware, async (req: AuthRequest, res: Respons
     }
 
     // Purchase
-    user.gems -= car.price;
-    await userRepository.save(user);
+    if (!isLuckmuc) {
+      user.gems -= car.price;
+      await userRepository.save(user);
+    }
 
     const ownership = carOwnershipRepository.create({
       userId,
@@ -97,12 +105,19 @@ router.post('/repair/:carId', authMiddleware, async (req: AuthRequest, res: Resp
 
     const repairCost = Math.floor((100 - ownership.condition) * 10); // 10 gems per damage point
     const user = await userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    if (!user || user.gems < repairCost) {
+    const isLuckmuc = user.username === 'Luckmuc';
+
+    if (!isLuckmuc && user.gems < repairCost) {
       return res.status(400).json({ error: 'Insufficient gems for repair' });
     }
 
-    user.gems -= repairCost;
+    if (!isLuckmuc) {
+      user.gems -= repairCost;
+    }
     ownership.condition = 100;
 
     await userRepository.save(user);

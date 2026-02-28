@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 
-type PageType = 'login' | 'register' | 'home' | 'garage' | 'maps' | 'leaderboard' | 'profile' | 'race' | 'editor' | 'party';
+type PageType = 'landing' | 'login' | 'register' | 'home' | 'garage' | 'maps' | 'leaderboard' | 'profile' | 'race' | 'editor' | 'party';
 
 interface NavigateOptions {
   [key: string]: any;
 }
 
-let currentPage: PageType = 'login';
+let currentPage: PageType = 'landing';
 let navigationListeners: (() => void)[] = [];
 let navigationParams: NavigateOptions = {};
 

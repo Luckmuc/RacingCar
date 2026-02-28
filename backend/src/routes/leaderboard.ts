@@ -1,10 +1,12 @@
 import { Router, Response } from 'express';
 import { AppDataSource } from '../config/database';
 import { Race } from '../models/Race';
+import { User } from '../models/User';
 import { AuthRequest, authMiddleware } from '../middleware/auth';
 
 const router = Router();
 const raceRepository = AppDataSource.getRepository(Race);
+const userRepository = AppDataSource.getRepository(User);
 
 // Get leaderboard for a map
 router.get('/:mapId', async (req, res: Response) => {
@@ -99,6 +101,8 @@ router.post('/race/save', authMiddleware, async (req: AuthRequest, res: Response
     const { mapId, finishTime, position, carId, mode } = req.body;
     const userId = req.user!.userId;
 
+    const gemsReward = 50; // Fixed 50 gems per race
+
     const race = raceRepository.create({
       userId,
       mapId,
@@ -106,12 +110,23 @@ router.post('/race/save', authMiddleware, async (req: AuthRequest, res: Response
       position,
       carId,
       mode,
-      gemsEarned: Math.floor(finishTime / 1000), // Simple gem calculation
+      gemsEarned: gemsReward,
     });
 
     await raceRepository.save(race);
 
-    res.json({ success: true, gemsEarned: race.gemsEarned });
+    // Award gems to user
+    const user = await userRepository.findOne({ where: { id: userId } });
+    if (user) {
+      user.gems += gemsReward;
+      user.totalRaces += 1;
+      if (position === 1) {
+        user.totalWins += 1;
+      }
+      await userRepository.save(user);
+    }
+
+    res.json({ success: true, gemsEarned: gemsReward, totalGems: user?.gems });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to save race' });

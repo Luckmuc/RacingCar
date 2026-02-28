@@ -4,10 +4,8 @@ services:
     container_name: racing_game_db
     environment:
       POSTGRES_USER: ${DB_USERNAME:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SuperSecureLuckmucDBPass123!}
       POSTGRES_DB: ${DB_NAME:-racing_game}
-    ports:
-      - "5432:5432"
     volumes:
       - database_data:/var/lib/postgresql/data
     healthcheck:
@@ -27,7 +25,7 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: ${DB_USERNAME:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-SuperSecureLuckmucDBPass123!}
       DB_NAME: ${DB_NAME:-racing_game}
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
       PORT: 3001

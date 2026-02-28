@@ -9,7 +9,11 @@
     "dev": "ts-node src/index.ts",
     "typeorm": "typeorm"
   },
-  "keywords": ["racing", "game", "multiplayer"],
+  "keywords": [
+    "racing",
+    "game",
+    "multiplayer"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -22,7 +26,8 @@
     "jsonwebtoken": "^9.0.2",
     "bcryptjs": "^2.4.3",
     "helmet": "^7.1.0",
-    "express-validator": "^7.0.0"
+    "express-validator": "^7.0.0",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -31,6 +36,7 @@
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.2",
     "typescript": "^5.3.3",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "@types/multer": "^1.4.11"
   }
 }

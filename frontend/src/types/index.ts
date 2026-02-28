@@ -29,6 +29,8 @@ export interface Map {
   checkpoints: any[];
   trackPath: any[];
   obstacles: any[];
+  sceneData: any[];
+  assets: any[];
   difficulty: number;
   isPublic: boolean;
   creatorId: string;

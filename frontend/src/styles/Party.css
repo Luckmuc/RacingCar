@@ -23,19 +23,53 @@
   gap: 0.75rem;
 }
 
-.party-form input {
+.party-input-wrap {
   flex: 1;
+  position: relative;
+}
+
+.party-form input {
+  width: 100%;
   background: var(--darker);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.6rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
   color: var(--light);
   font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .party-form input:focus {
   outline: none;
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.18);
+}
+
+.party-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #1e1e2a;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.party-suggestion-item {
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--light);
+  transition: background 0.15s;
+}
+
+.party-suggestion-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--primary);
 }
 
 .party-form button {

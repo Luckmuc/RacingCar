@@ -20,8 +20,9 @@ export class UserService {
   }
 
   async getOrCreateStarterCar(userId: string) {
+    // Give the Porsche GT3 RS as the default starter car
     const starterCar = await this.carRepository.findOne({
-      where: { description: 'starter' },
+      where: { name: 'Porsche GT3 RS' },
     });
     if (starterCar) {
       const carRepo = AppDataSource.getRepository('CarOwnership');
@@ -41,7 +42,7 @@ export class UserService {
       ORDER BY "finishTime" ASC
       LIMIT 1
     `, [mapId, userId]);
-    
+
     return userRecords.length > 0 ? userRecords[0] : null;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGame } from '../contexts/GameContext';
 import { useNavigate } from './Router';
@@ -10,6 +10,15 @@ export const Garage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<'owned' | 'shop'>('owned');
   const [message, setMessage] = useState('');
+  const [hoveredModel, setHoveredModel] = useState<string | null>(null);
+
+  const handleSelectCar = useCallback((car: any) => {
+    selectCar(car);
+    setMessage(`${car.name} selected!`);
+    setTimeout(() => {
+      navigate('home');
+    }, 900);
+  }, [selectCar, navigate]);
 
   const handleBuyCar = async (carId: number) => {
     try {
@@ -39,10 +48,16 @@ export const Garage: React.FC = () => {
       </div>
 
       {message && (
-        <div className={`message ${message.includes('failed') ? 'error' : 'success'}`}>
+        <div className={`message ${message.includes('selected') ? 'success' : message.includes('failed') ? 'error' : 'success'}`}>
           {message}
         </div>
       )}
+
+      <div className="garage-bg-bar">
+        <span style={{ color: '#888', fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', fontSize: '0.85rem' }}>
+          {hoveredModel || 'Hover over a car to see its name'}
+        </span>
+      </div>
 
       <div className="garage-tabs">
         <button
@@ -63,11 +78,15 @@ export const Garage: React.FC = () => {
         {selectedTab === 'owned' ? (
           state.ownedCars.length > 0 ? (
             state.ownedCars.map(car => (
-              <div key={car.id} className="car-card">
-                <div className="car-color" style={{ backgroundColor: car.color }}></div>
+              <div
+                key={car.id}
+                className="car-card"
+                onMouseEnter={() => setHoveredModel(car.name)}
+                onMouseLeave={() => setHoveredModel(null)}
+              >
                 <h3>{car.name}</h3>
                 <p>{car.description}</p>
-                
+
                 <div className="car-stats">
                   <div>ACC {car.acceleration}</div>
                   <div>SPD {car.maxSpeed}</div>
@@ -84,10 +103,10 @@ export const Garage: React.FC = () => {
                 <small>{t('garage.condition')}: {car.condition || 100}%</small>
 
                 <button
-                  className="btn-primary"
-                  onClick={() => selectCar(car)}
+                  className={`btn-primary ${state.selectedCar?.id === car.id ? 'btn-selected' : ''}`}
+                  onClick={() => handleSelectCar(car)}
                 >
-                  {t('garage.selectCar')}
+                  {state.selectedCar?.id === car.id ? 'Selected' : t('garage.selectCar')}
                 </button>
 
                 {car.condition! < 100 && (
@@ -107,8 +126,12 @@ export const Garage: React.FC = () => {
           state.cars.map(car => {
             const owned = state.ownedCars.some(oc => oc.id === car.id);
             return (
-              <div key={car.id} className="car-card">
-                <div className="car-color" style={{ backgroundColor: car.color }}></div>
+              <div
+                key={car.id}
+                className="car-card"
+                onMouseEnter={() => setHoveredModel(car.name)}
+                onMouseLeave={() => setHoveredModel(null)}
+              >
                 <h3>{car.name}</h3>
                 <p>{car.description}</p>
 

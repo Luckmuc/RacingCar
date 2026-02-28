@@ -10,21 +10,20 @@ export const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const startRace = (mode: string) => {
-    // Party mode goes to the party page
     if (mode === 'party') {
       navigate('party');
       return;
     }
-    // If no car selected, go to garage first
     if (!state.selectedCar) {
       navigate('garage');
       return;
     }
-    // If no map selected, go to maps to pick one
-    if (!state.selectedMap) {
-      navigate('maps');
+    if (!state.selectedCar) {
+      navigate('garage');
       return;
     }
+    // Attach the initial mode so Race.tsx can auto-start
+    (state as any).raceInitialMode = mode === 'training' ? 'ghost' : mode === 'race_bots' ? 'bots' : 'normal';
     navigate('race', { mode });
   };
 
@@ -45,26 +44,26 @@ export const Home: React.FC = () => {
       </div>
 
       <div className="race-modes">
-        <h2>{t('home.raceModes')}</h2>
+        <h2>Race</h2>
         <div className="modes-grid">
-          <div className="mode-card" onClick={() => startRace('normal')}>
-            <h3>{t('home.normalRace')}</h3>
-            <p>Race against 3 AI opponents</p>
+          <div className="mode-card" onClick={() => startRace('solo')}>
+            <h3>Solo</h3>
+            <p>Race alone against the clock</p>
+          </div>
+
+          <div className="mode-card" onClick={() => startRace('race_bots')}>
+            <h3>vs AI</h3>
+            <p>Race against 4 opponents</p>
           </div>
 
           <div className="mode-card" onClick={() => startRace('training')}>
-            <h3>{t('home.trainingRace')}</h3>
-            <p>Race against your best lap</p>
-          </div>
-
-          <div className="mode-card" onClick={() => startRace('multiplayer')}>
-            <h3>{t('home.multiplayerRace')}</h3>
-            <p>Race online with others</p>
+            <h3>Training</h3>
+            <p>Race against your ghost</p>
           </div>
 
           <div className="mode-card" onClick={() => startRace('party')}>
-            <h3>{t('home.partyRace')}</h3>
-            <p>Race with friends in a party</p>
+            <h3>Party</h3>
+            <p>Invite friends to race</p>
           </div>
         </div>
       </div>

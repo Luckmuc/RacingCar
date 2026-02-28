@@ -26,9 +26,13 @@ const io = new SocketIOServer(httpServer, {
 });
 
 // Middleware
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+
+// Serve uploaded assets as static files
+import path from 'path';
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -57,173 +61,93 @@ const startServer = async () => {
       await AppDataSource.initialize();
       console.log('[OK] Database connected');
 
-      // Seed default cars if not exist
+      // Seed all 5 cars
       const carRepo = AppDataSource.getRepository('Car');
+      const carOwnershipRepo = AppDataSource.getRepository('CarOwnership');
       const carCount = await carRepo.count();
-      if (carCount === 0) {
+
+      if (carCount < 5) {
+        // Clear ownership first, then cars (foreign key constraint)
+        try {
+          await carOwnershipRepo.delete({});
+          await carRepo.delete({});
+        } catch (e) {
+          console.log('Note: Could not clear old cars, may already be clean');
+        }
+
         const defaultCars = [
           {
-            name: 'Speed Demon',
-            description: 'starter',
-            maxSpeed: 200,
-            acceleration: 8,
-            handling: 5,
-            durability: 3,
+            name: 'Porsche GT3 RS',
+            description: 'Track-focused supercar with naturally aspirated flat-six',
+            maxSpeed: 296,
+            acceleration: 9.5,
+            handling: 9,
+            durability: 7,
             price: 0,
-            weight: 1200,
-            color: '#FF6B00',
+            weight: 1450,
+            color: '#FFFFFF',
+            imageUrl: '/models/porsche_gt3_rs.glb',
           },
           {
-            name: 'Thunder Bolt',
-            description: 'Fast and agile',
-            maxSpeed: 240,
-            acceleration: 9,
-            handling: 8,
-            durability: 4,
-            price: 500,
-            weight: 1100,
-            color: '#FFD700',
-          },
-          {
-            name: 'Iron Tank',
-            description: 'Slow but durable',
-            maxSpeed: 160,
-            acceleration: 6,
-            handling: 3,
-            durability: 9,
-            price: 500,
-            weight: 1500,
-            color: '#808080',
-          },
-          {
-            name: 'Precision Racer',
-            description: 'Best handling',
-            maxSpeed: 220,
-            acceleration: 7,
-            handling: 10,
-            durability: 5,
-            price: 750,
-            weight: 1150,
-            color: '#0066FF',
-          },
-          {
-            name: 'Rocket',
-            description: 'Legendary car',
+            name: 'BMW M4 Competition',
+            description: 'Twin-turbo inline-six with razor-sharp handling',
             maxSpeed: 280,
-            acceleration: 10,
-            handling: 7,
+            acceleration: 8.5,
+            handling: 8.5,
+            durability: 8,
+            price: 200,
+            weight: 1725,
+            color: '#1E3A5F',
+            imageUrl: '/models/bmw_m4.glb',
+          },
+          {
+            name: 'Lamborghini Huracan',
+            description: 'Naturally aspirated V10 mid-engine Italian supercar',
+            maxSpeed: 325,
+            acceleration: 9.8,
+            handling: 8,
             durability: 6,
-            price: 2000,
-            weight: 1000,
-            color: '#FF0000',
+            price: 400,
+            weight: 1422,
+            color: '#00CC00',
+            imageUrl: '/models/lamborghini_huracan.glb',
+          },
+          {
+            name: 'Mercedes AMG ONE',
+            description: 'Formula 1 hybrid technology for the road',
+            maxSpeed: 352,
+            acceleration: 9.9,
+            handling: 9.5,
+            durability: 5,
+            price: 600,
+            weight: 1695,
+            color: '#C0C0C0',
+            imageUrl: '/models/mercedes_amg_one.glb',
+          },
+          {
+            name: 'Mercedes AMG GT Black Series',
+            description: 'Handcrafted twin-turbo V8 flat-plane crank beast',
+            maxSpeed: 325,
+            acceleration: 9.7,
+            handling: 9.2,
+            durability: 6.5,
+            price: 500,
+            weight: 1550,
+            color: '#1A1A1A',
+            imageUrl: '/models/mercedes_amg_gt_black_series.glb',
           },
         ];
 
         for (const car of defaultCars) {
           await carRepo.insert(car);
         }
-        console.log('[OK] Default cars seeded');
+        console.log('[OK] All 5 cars seeded');
+      } else {
+        console.log('[OK] Cars already seeded (' + carCount + ')');
       }
 
-      // Seed default maps if not exist
-      const mapRepo = AppDataSource.getRepository('Map');
-      const mapCount = await mapRepo.count();
-      if (mapCount === 0) {
-        const defaultMaps = [
-          {
-            name: 'Starter Circuit',
-            description: 'A simple oval track for beginners',
-            checkpoints: [
-              { x: 0, y: 0, z: 0 },
-              { x: 200, y: 0, z: 0 },
-              { x: 300, y: 0, z: 200 },
-              { x: 200, y: 0, z: 400 },
-              { x: 0, y: 0, z: 400 },
-              { x: -100, y: 0, z: 200 },
-            ],
-            trackPath: [
-              { x: 0, y: 0, z: 0 },
-              { x: 100, y: 0, z: -50 },
-              { x: 200, y: 0, z: 0 },
-              { x: 300, y: 0, z: 100 },
-              { x: 300, y: 0, z: 200 },
-              { x: 250, y: 0, z: 350 },
-              { x: 200, y: 0, z: 400 },
-              { x: 100, y: 0, z: 450 },
-              { x: 0, y: 0, z: 400 },
-              { x: -100, y: 0, z: 300 },
-              { x: -100, y: 0, z: 200 },
-              { x: -50, y: 0, z: 50 },
-            ],
-            obstacles: [],
-            difficulty: 1,
-            isPublic: true,
-            creatorId: 'system',
-          },
-          {
-            name: 'Desert Sprint',
-            description: 'A fast straight track through the desert',
-            checkpoints: [
-              { x: 0, y: 0, z: 0 },
-              { x: 0, y: 0, z: 200 },
-              { x: 100, y: 0, z: 400 },
-              { x: 0, y: 0, z: 600 },
-            ],
-            trackPath: [
-              { x: 0, y: 0, z: 0 },
-              { x: 0, y: 0, z: 100 },
-              { x: 0, y: 0, z: 200 },
-              { x: 50, y: 0, z: 300 },
-              { x: 100, y: 0, z: 400 },
-              { x: 50, y: 0, z: 500 },
-              { x: 0, y: 0, z: 600 },
-            ],
-            obstacles: [
-              { x: 30, y: 0, z: 150 },
-              { x: -30, y: 0, z: 350 },
-            ],
-            difficulty: 2,
-            isPublic: true,
-            creatorId: 'system',
-          },
-          {
-            name: 'Mountain Pass',
-            description: 'Winding roads with sharp turns and obstacles',
-            checkpoints: [
-              { x: 0, y: 0, z: 0 },
-              { x: 150, y: 0, z: 150 },
-              { x: -100, y: 0, z: 300 },
-              { x: 200, y: 0, z: 450 },
-              { x: 0, y: 0, z: 600 },
-            ],
-            trackPath: [
-              { x: 0, y: 0, z: 0 },
-              { x: 80, y: 0, z: 80 },
-              { x: 150, y: 0, z: 150 },
-              { x: 50, y: 0, z: 220 },
-              { x: -100, y: 0, z: 300 },
-              { x: 50, y: 0, z: 380 },
-              { x: 200, y: 0, z: 450 },
-              { x: 100, y: 0, z: 530 },
-              { x: 0, y: 0, z: 600 },
-            ],
-            obstacles: [
-              { x: 100, y: 0, z: 100 },
-              { x: -50, y: 0, z: 250 },
-              { x: 150, y: 0, z: 400 },
-              { x: 50, y: 0, z: 550 },
-            ],
-            difficulty: 4,
-            isPublic: true,
-            creatorId: 'system',
-          },
-        ];
-
-        for (const map of defaultMaps) {
-          await mapRepo.insert(map);
-        }
-        console.log('[OK] Default maps seeded');
-      }
+      // Maps: no auto-seed — user builds new maps from 3D editor
+      console.log('[OK] Maps: ready (user-created only)');
     }
 
     // Start listening

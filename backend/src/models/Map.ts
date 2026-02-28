@@ -20,6 +20,14 @@ export class Map {
   @Column({ type: 'jsonb', default: [] })
   obstacles!: any[];
 
+  // Full 3D editor scene data — all placed objects, transforms, textures
+  @Column({ type: 'jsonb', default: [] })
+  sceneData!: any[];
+
+  // Uploaded asset references [{ name, url, type }]
+  @Column({ type: 'jsonb', default: [] })
+  assets!: any[];
+
   @Column({ default: 3 })
   difficulty!: number; // 1-5
 
